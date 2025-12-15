@@ -94,7 +94,7 @@ def delete_member(member_id):
     try:
         removed = jackson_family.delete_member(member_id)
         if not removed:
-            return not_found(f"Member with id={member_id} not found")
+            return jsonify({"error": f"Member with id={member_id} not found"}), 404
         return jsonify({"done": True}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
