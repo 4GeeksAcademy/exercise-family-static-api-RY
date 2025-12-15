@@ -9,15 +9,7 @@ class FamilyStructure:
     def __init__(self, last_name):
         self.last_name = last_name
         self._next_id = 1
-        self._members = [
-            {
-                "id": self._generate_id(),
-                "first_name": "John",
-                "last_name": last_name,
-                "age": 33,
-                "lucky_numbers": [7, 13, 22]
-            }
-        ]
+        self._members = []
 
     # This method generates a unique incremental ID
     def _generate_id(self):
@@ -26,19 +18,28 @@ class FamilyStructure:
         return generated_id
 
     def add_member(self, member):
-        ## You have to implement this method
-        ## Append the member to the list of _members
-        pass
+        new_member = dict(member) if isinstance(member,dict) else {}## You have to implement this method
+        if "id" not in new_member or new_member["id"] is None:
+            new_member["id"] = self._generate_id()
+            
+        new_member["last_name"] = self.last_name
+        
+        self._members.append(new_member)## Append the member to the list of _members
+        return new_member
 
     def delete_member(self, id):
-        ## You have to implement this method
-        ## Loop the list and delete the member with the given id
-        pass
+        for idx, m in enumerate(self.members):
+            if m.get("id") == id:
+                self._members.pop(idx)## You have to implement this method
+                return True
+        return False  ## Loop the list and delete the member with the given id
 
     def get_member(self, id):
-        ## You have to implement this method
-        ## Loop all the members and return the one with the given id
-        pass
+        for m in self._members:
+            if m.get("id") == id:
+                return m ## You have to implement this method
+        return None ## Loop all the members and return the one with the given id
+        
 
     # This method is done, it returns a list with all the family members
     def get_all_members(self):
