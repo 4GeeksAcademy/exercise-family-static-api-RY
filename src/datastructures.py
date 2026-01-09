@@ -1,46 +1,52 @@
-"""
-Update this file to implement the following already declared methods:
-- add_member: Should add a member to the self._members list
-- delete_member: Should delete a member from the self._members list
-- get_member: Should return a member from the self._members list
-"""
 
 class FamilyStructure:
-    def __init__(self, last_name):
+    def __init__(self, last_name: str):
         self.last_name = last_name
-        self._next_id = 1
-        self._members = []
+        self._members: list[dict] = []
+        self._next_id: int = 1
 
-    # This method generates a unique incremental ID
-    def _generate_id(self):
-        generated_id = self._next_id
+    @property
+    def members(self) -> list[dict]:
+        return self._members
+
+    def _generate_id(self) -> int:
+        _id = self._next_id
         self._next_id += 1
-        return generated_id
+        return _id
 
-    def add_member(self, member):
-        new_member = dict(member) if isinstance(member,dict) else {}## You have to implement this method
-        if "id" not in new_member or new_member["id"] is None:
-            new_member["id"] = self._generate_id()
-            
-        new_member["last_name"] = self.last_name
-        
-        self._members.append(new_member)## Append the member to the list of _members
+    # Agrega un miembro y devuelve el miembro creado
+    def add_member(self, member: dict) -> dict:
+        if "id" in member and member["id"] is not None:
+            new_id = int(member["id"])
+            if new_id >= self._next_id:
+                self._next_id = new_id + 1
+        else:
+            new_id = self._generate_id()
+
+        # Normaliza campos mínimos
+        new_member = {
+            "id": new_id,
+            "first_name": member["first_name"],
+            "last_name": self.last_name,
+            "age": int(member["age"]),
+            "lucky_numbers": list(member.get("lucky_numbers", [])),
+        }
+
+        self._members.append(new_member)
         return new_member
 
-    def delete_member(self, id):
-        for idx, m in enumerate(self.members):
-            if m.get("id") == id:
-                self._members.pop(idx)## You have to implement this method
-                return True
-        return False  ## Loop the list and delete the member with the given id
+    # Devuelve un miembro por id o None
+    def get_member(self, id: int) -> dict | None:
+        _id = int(id)
+        return next((m for m in self._members if m["id"] == _id), None)
 
-    def get_member(self, id):
-        for m in self._members:
-            if m.get("id") == id:
-                return m ## You have to implement this method
-        return None ## Loop all the members and return the one with the given id
-        
-
-    # This method is done, it returns a list with all the family members
-    def get_all_members(self):
+    def get_all_members(self) -> list[dict]:
         return self._members
+
+    def delete_member(self, id: int) -> bool:
+        _id = int(id)
+        for i, m in enumerate(self._members):
+            if m["id"] == _id:
+                self._members.pop(i)
+                return True
+        return False
